@@ -1,4 +1,4 @@
-package com.practicum.mymovies
+package com.practicum.mymovies.ui.movies
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.mymovies.ui.poster.PosterActivity
+import com.practicum.mymovies.R
+import com.practicum.mymovies.data.dto.MoviesSearchResponse
+import com.practicum.mymovies.data.network.IMDbApiService
+import com.practicum.mymovies.domain.models.Movie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,19 +27,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MoviesActivity : Activity() {
 
-    private val imdbBaseUrl = "https://tv-api.com"
-
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(imdbBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val imdbService = retrofit.create(IMDbApiService::class.java)
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
