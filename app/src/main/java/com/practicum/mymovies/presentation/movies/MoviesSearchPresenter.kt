@@ -47,7 +47,7 @@ class MoviesSearchPresenter(
 
             view.showPlaceholderMessage(false)
             view.showMoviesList(false)
-            view.showProgressBar(false)
+            view.showProgressBar(true)
 
             moviesInteractor.searchMovies(
                 newSearchText,
