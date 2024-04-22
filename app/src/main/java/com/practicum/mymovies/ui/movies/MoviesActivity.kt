@@ -19,6 +19,7 @@ import com.practicum.mymovies.ui.poster.PosterActivity
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MoviesView
+import com.practicum.mymovies.ui.movies.models.MovieState
 
 class MoviesActivity : Activity(), MoviesView {
 
@@ -93,29 +94,49 @@ class MoviesActivity : Activity(), MoviesView {
         return current
     }
 
-    override fun showPlaceholderMessage(isVisible: Boolean) {
-        placeholderMessage.visibility = if (isVisible) View.VISIBLE else View.GONE
+    private fun showLoading() {
+        moviesList.visibility = View.GONE
+        placeholderMessage.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
     }
 
-    override fun showMoviesList(isVisible: Boolean) {
-        moviesList.visibility = if (isVisible) View.VISIBLE else View.GONE
+    private fun showError(errorMessage: String) {
+        moviesList.visibility = View.GONE
+        placeholderMessage.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+
+        placeholderMessage.text = errorMessage
     }
 
-    override fun showProgressBar(isVisible: Boolean) {
-        progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
+    private fun showEmpty(emptyMessage: String) {
+        showError(emptyMessage)
     }
 
-    override fun changePlaceholderText(newPlaceholderText: String) {
-        placeholderMessage.text = newPlaceholderText
-    }
+    private fun showContent(movies: List<Movie>) {
+        moviesList.visibility = View.VISIBLE
+        placeholderMessage.visibility = View.GONE
+        progressBar.visibility = View.GONE
 
-    override fun updateMoviesList(newMoviesList: List<Movie>) {
         adapter.movies.clear()
-        adapter.movies.addAll(newMoviesList)
+        adapter.movies.addAll(movies)
         adapter.notifyDataSetChanged()
     }
 
-    override fun showMessage(message: String) {
+    override fun render(state: MovieState) {
+//        when {
+//            state.isLoading -> showLoading()
+//            state.errorMessage != null -> showError(state.errorMessage)
+//            else -> showContent(state.movies)
+//        }
+        when (state) {
+            is MovieState.Loading -> showLoading()
+            is MovieState.Content -> showContent(state.movies)
+            is MovieState.Error -> showError(state.errorMessage)
+            is MovieState.Empty -> showEmpty(state.message)
+        }
+    }
+
+    override fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
