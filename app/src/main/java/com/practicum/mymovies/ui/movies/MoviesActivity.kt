@@ -14,10 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.practicum.mymovies.util.MoviesApplication
 import com.practicum.mymovies.util.Creator
 import com.practicum.mymovies.ui.poster.PosterActivity
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
+import com.practicum.mymovies.presentation.movies.MoviesSearchPresenter
 import com.practicum.mymovies.presentation.movies.MoviesView
 import com.practicum.mymovies.ui.movies.models.MovieState
 
@@ -26,6 +28,8 @@ class MoviesActivity : Activity(), MoviesView {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+//        Шаг 1.3. Сохранить Presenter в статическом состоянии
+//        private var moviesSearchPresenter: MoviesSearchPresenter? = null
     }
 
     private val adapter = MoviesAdapter {
@@ -40,9 +44,6 @@ class MoviesActivity : Activity(), MoviesView {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val moviesSearchPresenter =
-        Creator.provideMoviesSearchPresenter(moviesView = this, context = this)
-
     private var textWatcher: TextWatcher? = null
 
     private lateinit var queryInput: EditText
@@ -50,9 +51,26 @@ class MoviesActivity : Activity(), MoviesView {
     private lateinit var moviesList: RecyclerView
     private lateinit var progressBar: ProgressBar
 
+    private var moviesSearchPresenter: MoviesSearchPresenter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
+
+//        Шаг 1.2. Callback onRetainNonConfigurationInstance
+//        moviesSearchPresenter = lastNonConfigurationInstance as? MoviesSearchPresenter
+//        Шаг 1.4. Сохранить Presenter в Application
+        moviesSearchPresenter =
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter
+
+        if (moviesSearchPresenter == null) {
+            moviesSearchPresenter = Creator.provideMoviesSearchPresenter(
+                context = this.applicationContext
+            )
+//            Шаг 1.4. Сохранить Presenter в Application
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter =
+                moviesSearchPresenter
+        }
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
@@ -68,7 +86,7 @@ class MoviesActivity : Activity(), MoviesView {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                moviesSearchPresenter.searchDebounce(
+                moviesSearchPresenter?.searchDebounce(
                     changedText = p0?.toString() ?: ""
                 )
             }
@@ -79,11 +97,50 @@ class MoviesActivity : Activity(), MoviesView {
         textWatcher?.let { queryInput.addTextChangedListener(it) }
     }
 
+    override fun onStart() {
+        super.onStart()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        moviesSearchPresenter?.detachView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
-        moviesSearchPresenter.onDestroy()
+
+        //    Шаг 2.1. Правильно привязать View к Presenter
+        moviesSearchPresenter?.detachView()
+
+        moviesSearchPresenter?.onDestroy()
+
+        if (isFinishing()) {
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter = null
+        }
     }
+
+//    Шаг 1.2. Callback onRetainNonConfigurationInstance
+//    override fun onRetainNonConfigurationInstance(): Any? {
+//        return moviesSearchPresenter
+//    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed

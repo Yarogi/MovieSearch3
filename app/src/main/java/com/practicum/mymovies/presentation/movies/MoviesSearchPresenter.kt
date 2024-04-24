@@ -11,9 +11,25 @@ import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.ui.movies.models.MovieState
 
 class MoviesSearchPresenter(
-    private val view: MoviesView,
     private val context: Context
 ) {
+
+    //    Шаг 2.1. Правильно привязать View к Presenter
+    private var view: MoviesView? = null
+
+    private var state: MovieState? = null
+    private var latestSearchText: String? = null
+
+    //    Шаг 2.1. Правильно привязать View к Presenter
+    fun attachView(view: MoviesView) {
+        this.view = view
+        state?.let { view.render(it) }
+    }
+
+    //    Шаг 2.1. Правильно привязать View к Presenter
+    fun detachView() {
+        this.view = null
+    }
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -31,6 +47,12 @@ class MoviesSearchPresenter(
     }
 
     fun searchDebounce(changedText: String) {
+        if (latestSearchText == changedText) {
+            return
+        }
+
+        this.latestSearchText = changedText
+
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
         val searchRunnable = Runnable { searchRequest(changedText) }
@@ -46,7 +68,7 @@ class MoviesSearchPresenter(
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 
-            view.render(
+            renderState(
 //                MovieState(
 //                    movies = movies,
 //                    isLoading = true,
@@ -67,7 +89,7 @@ class MoviesSearchPresenter(
 
                             when {
                                 errorMessage != null -> {
-                                    view.render(
+                                    renderState(
 //                                        MovieState(
 //                                            movies = emptyList(),
 //                                            isLoading = false,
@@ -77,11 +99,11 @@ class MoviesSearchPresenter(
                                             errorMessage = context.getString(R.string.something_went_wrong)
                                         )
                                     )
-                                    view.showToast(errorMessage)
+                                    view?.showToast(errorMessage)
                                 }
 
                                 movies.isEmpty() -> {
-                                    view.render(
+                                    renderState(
 //                                        MovieState(
 //                                            movies = emptyList(),
 //                                            isLoading = false,
@@ -95,7 +117,7 @@ class MoviesSearchPresenter(
                                 }
 
                                 else -> {
-                                    view.render(
+                                    renderState(
 //                                        MovieState(
 //                                            movies = movies,
 //                                            isLoading = false,
@@ -114,4 +136,10 @@ class MoviesSearchPresenter(
             )
         }
     }
+
+    private fun renderState(state: MovieState) {
+        this.state = state
+        this.view?.render(state)
+    }
+
 }
