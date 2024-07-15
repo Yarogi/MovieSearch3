@@ -1,11 +1,10 @@
 package com.practicum.mymovies.util
 
 import android.app.Application
-import com.practicum.mymovies.presentation.movies.MoviesSearchPresenter
+import com.practicum.mymovies.presentation.movies.MoviesSearchViewModel
 
 class MoviesApplication : Application() {
 
-//    Шаг 1.4. Сохранить Presenter в Application
-    var moviesSearchPresenter: MoviesSearchPresenter? = null
+    var moviesSearchViewModel: MoviesSearchViewModel? = null
 
 }
