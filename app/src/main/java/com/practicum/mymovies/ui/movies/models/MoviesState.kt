@@ -8,20 +8,20 @@ import com.practicum.mymovies.domain.models.Movie
 //    val errorMessage: String?
 //)
 
-sealed interface MovieState {
+sealed interface MoviesState {
 
-    object Loading : MovieState
+    object Loading : MoviesState
 
     data class Content(
         val movies: List<Movie>
-    ) : MovieState
+    ) : MoviesState
 
     data class Error(
-        val errorMessage: String
-    ) : MovieState
+        val message: String
+    ) : MoviesState
 
     data class Empty(
         val message: String
-    ) : MovieState
+    ) : MoviesState
 
 }

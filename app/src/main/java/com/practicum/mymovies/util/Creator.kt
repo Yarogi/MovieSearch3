@@ -1,14 +1,14 @@
 package com.practicum.mymovies.util
 
+import android.app.Application
 import android.content.Context
 import com.practicum.mymovies.data.MoviesRepositoryImpl
 import com.practicum.mymovies.data.network.RetrofitNetworkClient
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.api.MoviesRepository
 import com.practicum.mymovies.domain.impl.MoviesInteractorImpl
-import com.practicum.mymovies.presentation.movies.MoviesSearchPresenter
+import com.practicum.mymovies.presentation.movies.MoviesSearchViewModel
 import com.practicum.mymovies.presentation.poster.PosterPresenter
-import com.practicum.mymovies.presentation.movies.MoviesView
 import com.practicum.mymovies.presentation.poster.PosterView
 
 object Creator {
@@ -22,9 +22,9 @@ object Creator {
 
     fun provideMoviesSearchPresenter(
         context: Context
-    ): MoviesSearchPresenter {
-        return MoviesSearchPresenter(
-            context = context
+    ): MoviesSearchViewModel {
+        return MoviesSearchViewModel(
+            application = Application()
         )
     }
 
