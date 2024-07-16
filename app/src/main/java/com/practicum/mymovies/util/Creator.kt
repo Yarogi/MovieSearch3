@@ -13,7 +13,10 @@ import com.practicum.mymovies.presentation.poster.PosterView
 
 object Creator {
     private fun getMoviesRepository(context: Context): MoviesRepository {
-        return MoviesRepositoryImpl(RetrofitNetworkClient(context))
+        return MoviesRepositoryImpl(
+            RetrofitNetworkClient(context),
+            LocalStorage(context.getSharedPreferences("local_storage", Context.MODE_PRIVATE)),
+        )
     }
 
     fun provideMoviesInteractor(context: Context): MoviesInteractor {
