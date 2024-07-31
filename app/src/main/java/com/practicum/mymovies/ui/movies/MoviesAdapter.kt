@@ -22,4 +22,5 @@ class MoviesAdapter(private val clickListener: MovieClickListener) :
         fun onMovieClick(movie: Movie)
         fun onFavoriteToggleClick(movie: Movie)
     }
+
 }

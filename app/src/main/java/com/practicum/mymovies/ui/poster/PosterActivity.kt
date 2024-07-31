@@ -32,4 +32,5 @@ class PosterActivity : Activity(), PosterView {
             .load(url)
             .into(poster)
     }
+
 }

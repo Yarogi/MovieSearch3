@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.mymovies.util.Creator
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.models.Movie
@@ -20,21 +19,10 @@ import com.practicum.mymovies.ui.movies.models.MoviesState
 import com.practicum.mymovies.util.SingleLiveEvent
 
 class MoviesSearchViewModel(
+    private val moviesInteractor: MoviesInteractor,
     application: Application
 ) : AndroidViewModel(application) {
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                MoviesSearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val moviesInteractor = Creator.provideMoviesInteractor(getApplication())
     private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<MoviesState>()
@@ -151,6 +139,11 @@ class MoviesSearchViewModel(
                 )
             }
         }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
 }
