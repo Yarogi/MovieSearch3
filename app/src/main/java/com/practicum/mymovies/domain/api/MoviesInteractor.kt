@@ -3,6 +3,7 @@ package com.practicum.mymovies.domain.api
 import com.practicum.mymovies.domain.models.Movie
 
 interface MoviesInteractor {
+
     fun searchMovies(expression: String, consumer: MoviesConsumer)
 
     interface MoviesConsumer {
@@ -11,4 +12,5 @@ interface MoviesInteractor {
 
     fun addMovieToFavorites(movie: Movie)
     fun removeMovieFromFavorites(movie: Movie)
+
 }

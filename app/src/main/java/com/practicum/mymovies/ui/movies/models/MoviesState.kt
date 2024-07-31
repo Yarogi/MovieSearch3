@@ -2,12 +2,6 @@ package com.practicum.mymovies.ui.movies.models
 
 import com.practicum.mymovies.domain.models.Movie
 
-//data class MovieState(
-//    val movies: List<Movie>,
-//    val isLoading: Boolean,
-//    val errorMessage: String?
-//)
-
 sealed interface MoviesState {
 
     object Loading : MoviesState

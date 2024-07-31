@@ -12,7 +12,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.mymovies.ui.poster.PosterActivity
@@ -20,12 +19,9 @@ import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MoviesSearchViewModel
 import com.practicum.mymovies.ui.movies.models.MoviesState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : ComponentActivity() {
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 
     private val adapter = MoviesAdapter (
         object : MoviesAdapter.MovieClickListener {
@@ -53,16 +49,11 @@ class MoviesActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private lateinit var viewModel: MoviesSearchViewModel
+    private val viewModel by viewModel<MoviesSearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movies)
-
-        viewModel = ViewModelProvider(
-            this,
-            MoviesSearchViewModel.getViewModelFactory()
-        )[MoviesSearchViewModel::class.java]
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
@@ -83,8 +74,7 @@ class MoviesActivity : ComponentActivity() {
                 )
             }
 
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
         textWatcher.let { queryInput.addTextChangedListener(it) }
 
@@ -150,6 +140,10 @@ class MoviesActivity : ComponentActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
 }

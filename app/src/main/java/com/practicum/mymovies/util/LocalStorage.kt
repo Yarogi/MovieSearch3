@@ -3,6 +3,7 @@ package com.practicum.mymovies.util
 import android.content.SharedPreferences
 
 class LocalStorage(private val sharedPreferences: SharedPreferences) {
+
     private companion object {
         const val FAVORITES_KEY = "FAVORITES_KEY"
     }
@@ -24,4 +25,5 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         val modified = if (remove) mutableSet.remove(movieId) else mutableSet.add(movieId)
         if (modified) sharedPreferences.edit().putStringSet(FAVORITES_KEY, mutableSet).apply()
     }
+
 }
