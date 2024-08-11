@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.poster.PosterActivity"
+            android:name=".ui.poster.DetailsActivity"
             android:exported="false" />
     </application>
 

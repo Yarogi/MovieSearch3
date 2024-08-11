@@ -1,9 +1,12 @@
 package com.practicum.mymovies.data
 
+import com.practicum.mymovies.data.dto.MovieDetailsResponse
+import com.practicum.mymovies.data.dto.MovieDetailsRequest
 import com.practicum.mymovies.data.dto.MoviesSearchRequest
 import com.practicum.mymovies.data.dto.MoviesSearchResponse
 import com.practicum.mymovies.domain.api.MoviesRepository
 import com.practicum.mymovies.domain.models.Movie
+import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.util.LocalStorage
 import com.practicum.mymovies.util.Resource
 
@@ -18,6 +21,7 @@ class MoviesRepositoryImpl(
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
+
             200 -> {
                 val stored = localStorage.getSavedFavorites()
 
@@ -32,6 +36,31 @@ class MoviesRepositoryImpl(
                     )
                 })
             }
+
+            else -> {
+                Resource.Error("Ошибка сервера")
+            }
+        }
+    }
+
+    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+        val response = networkClient.doRequest(MovieDetailsRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+
+            200 -> {
+                with(response as MovieDetailsResponse) {
+                    Resource.Success(
+                        MovieDetails(
+                            id, title, imDbRating, year,
+                            countries, genres, directors, writers, stars, plot
+                        )
+                    )
+                }
+            }
+
             else -> {
                 Resource.Error("Ошибка сервера")
             }

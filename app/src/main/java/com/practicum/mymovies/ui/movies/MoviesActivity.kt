@@ -14,21 +14,23 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.mymovies.ui.poster.PosterActivity
+import com.practicum.mymovies.ui.poster.DetailsActivity
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MoviesSearchViewModel
+import com.practicum.mymovies.ui.adapters.MoviesAdapter
 import com.practicum.mymovies.ui.movies.models.MoviesState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : ComponentActivity() {
 
-    private val adapter = MoviesAdapter (
+    private val adapter = MoviesAdapter(
         object : MoviesAdapter.MovieClickListener {
             override fun onMovieClick(movie: Movie) {
                 if (clickDebounce()) {
-                    val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
+                    val intent = Intent(this@MoviesActivity, DetailsActivity::class.java)
                     intent.putExtra("poster", movie.image)
+                    intent.putExtra("id", movie.id)
                     startActivity(intent)
                 }
             }
@@ -37,7 +39,7 @@ class MoviesActivity : ComponentActivity() {
                 viewModel.toggleFavorite(movie)
             }
         }
-        )
+    )
 
     private lateinit var queryInput: EditText
     private lateinit var placeholderMessage: TextView
