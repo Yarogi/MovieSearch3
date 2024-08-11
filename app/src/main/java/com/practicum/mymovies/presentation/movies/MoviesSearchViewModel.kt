@@ -8,10 +8,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.models.Movie
@@ -72,7 +68,7 @@ class MoviesSearchViewModel(
         if (newSearchText.isNotEmpty()) {
             renderState(MoviesState.Loading)
 
-            moviesInteractor.searchMovies(newSearchText, object : MoviesInteractor.MoviesConsumer {
+            moviesInteractor.searchMovies(newSearchText, object : MoviesInteractor.MoviesSearchConsumer {
                 override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
                     val movies = mutableListOf<Movie>()
                     if (foundMovies != null) {
