@@ -1,17 +1,22 @@
 package com.practicum.mymovies.data
 
+import com.practicum.mymovies.data.converters.MovieCastConverter
 import com.practicum.mymovies.data.dto.MovieDetailsResponse
 import com.practicum.mymovies.data.dto.MovieDetailsRequest
+import com.practicum.mymovies.data.dto.MovieCastRequest
+import com.practicum.mymovies.data.dto.MovieCastResponse
 import com.practicum.mymovies.data.dto.MoviesSearchRequest
 import com.practicum.mymovies.data.dto.MoviesSearchResponse
 import com.practicum.mymovies.domain.api.MoviesRepository
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.domain.models.MovieDetails
+import com.practicum.mymovies.domain.models.MovieCast
 import com.practicum.mymovies.util.LocalStorage
 import com.practicum.mymovies.util.Resource
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
+    private val movieCastConverter: MovieCastConverter,
     private val localStorage: LocalStorage,
 ) : MoviesRepository {
 
@@ -61,6 +66,23 @@ class MoviesRepositoryImpl(
                 }
             }
 
+            else -> {
+                Resource.Error("Ошибка сервера")
+            }
+        }
+    }
+
+    override fun getMovieCast(movieId: String): Resource<MovieCast> {
+        val response = networkClient.doRequest(MovieCastRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+            200 -> {
+                    Resource.Success(
+                        data = movieCastConverter.convert(response as MovieCastResponse)
+                    )
+            }
             else -> {
                 Resource.Error("Ошибка сервера")
             }

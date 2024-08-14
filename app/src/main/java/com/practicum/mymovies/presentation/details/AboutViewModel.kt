@@ -1,11 +1,10 @@
-package com.practicum.mymovies.presentation.poster
+package com.practicum.mymovies.presentation.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.models.MovieDetails
-import com.practicum.mymovies.ui.poster.models.AboutState
 
 class AboutViewModel(
     private val movieId: String,

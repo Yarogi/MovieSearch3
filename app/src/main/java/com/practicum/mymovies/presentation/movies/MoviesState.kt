@@ -1,4 +1,4 @@
-package com.practicum.mymovies.ui.movies.models
+package com.practicum.mymovies.presentation.movies
 
 import com.practicum.mymovies.domain.models.Movie
 

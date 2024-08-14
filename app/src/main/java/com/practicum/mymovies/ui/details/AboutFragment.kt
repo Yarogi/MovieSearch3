@@ -1,4 +1,4 @@
-package com.practicum.mymovies.presentation.poster
+package com.practicum.mymovies.ui.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.practicum.mymovies.databinding.FragmentAboutBinding
 import com.practicum.mymovies.domain.models.MovieDetails
-import com.practicum.mymovies.ui.poster.models.AboutState
+import com.practicum.mymovies.presentation.details.AboutState
+import com.practicum.mymovies.presentation.details.AboutViewModel
+import com.practicum.mymovies.ui.cast.MoviesCastActivity
 import com.practicum.mymovies.util.invisible
 import com.practicum.mymovies.util.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,6 +41,15 @@ class AboutFragment : Fragment() {
                 is AboutState.Error -> showErrorMessage(it.message)
             }
         }
+
+        binding.showCastButton.setOnClickListener {
+            startActivity(
+                MoviesCastActivity.newInstance(
+                    context = requireActivity(),
+                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                )
+            )
+        }
     }
 
     private fun showErrorMessage(message: String) {
@@ -53,7 +64,7 @@ class AboutFragment : Fragment() {
         binding.apply {
             details.visible()
             errorMessage.invisible()
-            title.text = movieDetails.title
+            titleValue.text = movieDetails.title
             ratingValue.text = movieDetails.imDbRating
             yearValue.text = movieDetails.year
             countryValue.text = movieDetails.countries

@@ -1,4 +1,4 @@
-package com.practicum.mymovies.util
+package com.practicum.mymovies
 
 import android.app.Application
 import com.practicum.mymovies.di.dataModule
