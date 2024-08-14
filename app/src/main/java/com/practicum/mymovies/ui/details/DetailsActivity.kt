@@ -1,11 +1,10 @@
-package com.practicum.mymovies.ui.poster
+package com.practicum.mymovies.ui.details
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.mymovies.R
 import com.practicum.mymovies.databinding.ActivityDetailsBinding
-import com.practicum.mymovies.presentation.poster.DetailsViewPagerAdapter
 
 class DetailsActivity : AppCompatActivity() {
 

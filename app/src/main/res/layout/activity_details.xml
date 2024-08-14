@@ -14,11 +14,12 @@
         android:layout_marginRight="@dimen/section_margin"
         android:background="@color/white"
         app:tabIndicatorColor="@color/black"
+        app:tabIndicatorFullWidth="true"
         app:tabRippleColor="@color/light_gray"
         app:tabTextColor="@color/black" />
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

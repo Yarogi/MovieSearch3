@@ -14,12 +14,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.mymovies.ui.poster.DetailsActivity
+import com.practicum.mymovies.ui.details.DetailsActivity
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
-import com.practicum.mymovies.presentation.movies.MoviesSearchViewModel
-import com.practicum.mymovies.ui.adapters.MoviesAdapter
-import com.practicum.mymovies.ui.movies.models.MoviesState
+import com.practicum.mymovies.presentation.movies.MoviesViewModel
+import com.practicum.mymovies.presentation.movies.MoviesState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesActivity : ComponentActivity() {
@@ -51,7 +50,7 @@ class MoviesActivity : ComponentActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val viewModel by viewModel<MoviesSearchViewModel>()
+    private val viewModel by viewModel<MoviesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

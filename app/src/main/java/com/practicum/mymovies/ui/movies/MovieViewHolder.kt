@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.models.Movie
-import com.practicum.mymovies.ui.adapters.MoviesAdapter
 
 class MovieViewHolder(
     parent: ViewGroup,
@@ -19,7 +18,7 @@ class MovieViewHolder(
 ) {
 
     private var cover: ImageView = itemView.findViewById(R.id.cover)
-    private var title: TextView = itemView.findViewById(R.id.title)
+    private var title: TextView = itemView.findViewById(R.id.titleValue)
     private var description: TextView = itemView.findViewById(R.id.description)
     private var inFavoriteToggle: ImageView = itemView.findViewById(R.id.favorite)
 

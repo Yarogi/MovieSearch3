@@ -11,10 +11,8 @@ import androidx.lifecycle.MutableLiveData
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.models.Movie
-import com.practicum.mymovies.ui.movies.models.MoviesState
-import com.practicum.mymovies.util.SingleLiveEvent
 
-class MoviesSearchViewModel(
+class MoviesViewModel(
     private val moviesInteractor: MoviesInteractor,
     application: Application
 ) : AndroidViewModel(application) {

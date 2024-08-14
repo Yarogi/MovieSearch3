@@ -1,4 +1,4 @@
-package com.practicum.mymovies.presentation.poster
+package com.practicum.mymovies.ui.details
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
