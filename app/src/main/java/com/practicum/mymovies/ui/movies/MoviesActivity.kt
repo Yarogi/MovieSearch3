@@ -58,7 +58,7 @@ class MoviesActivity : ComponentActivity() {
 
         placeholderMessage = findViewById(R.id.placeholderMessage)
         queryInput = findViewById(R.id.queryInput)
-        moviesList = findViewById(R.id.locations)
+        moviesList = findViewById(R.id.movies_list)
         progressBar = findViewById(R.id.progressBar)
 
         moviesList.layoutManager =
@@ -93,9 +93,6 @@ class MoviesActivity : ComponentActivity() {
         textWatcher.let { queryInput.removeTextChangedListener(it) }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
 
     private fun render(state: MoviesState) {
         when (state) {
@@ -123,6 +120,11 @@ class MoviesActivity : ComponentActivity() {
     private fun showEmpty(emptyMessage: String) {
         showError(emptyMessage)
     }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
 
     private fun showContent(movies: List<Movie>) {
         moviesList.visibility = View.VISIBLE
