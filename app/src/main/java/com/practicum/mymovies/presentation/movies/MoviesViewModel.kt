@@ -80,7 +80,7 @@ class MoviesViewModel(
                                     message = getApplication<Application>().getString(R.string.something_went_wrong),
                                 )
                             )
-                            showToast.postValue(errorMessage)
+                            showToast.postValue(errorMessage?:"")
                         }
 
                         movies.isEmpty() -> {

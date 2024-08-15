@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import com.practicum.mymovies.R
 import com.practicum.mymovies.databinding.FragmentAboutBinding
 import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.presentation.details.AboutState
 import com.practicum.mymovies.presentation.details.AboutViewModel
-import com.practicum.mymovies.ui.cast.MoviesCastActivity
+import com.practicum.mymovies.ui.cast.MovieCastFragment
 import com.practicum.mymovies.util.invisible
 import com.practicum.mymovies.util.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,7 +28,7 @@ class AboutFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentAboutBinding.inflate(inflater, container, false)
         return binding.root
@@ -43,12 +45,29 @@ class AboutFragment : Fragment() {
         }
 
         binding.showCastButton.setOnClickListener {
-            startActivity(
-                MoviesCastActivity.newInstance(
-                    context = requireActivity(),
-                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+
+            parentFragment?.parentFragmentManager?.commit {
+                replace(
+                    R.id.rootFragmentContainerView,
+                    MovieCastFragment.newInstance(
+                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                    ),
+                    MovieCastFragment.TAG
                 )
-            )
+                addToBackStack(MovieCastFragment.TAG)
+            }
+
+            requireActivity().supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add(
+                    R.id.rootFragmentContainerView,
+                    MovieCastFragment.newInstance(
+                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                    )
+                )
+                addToBackStack(null)
+            }
+
         }
     }
 
