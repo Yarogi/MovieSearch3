@@ -8,9 +8,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.mymovies.R
 import com.practicum.mymovies.databinding.FragmentDetailsBinding
-import com.practicum.mymovies.util.BindingFragment
 
-class DetailsFragment : BindingFragment<FragmentDetailsBinding>() {
+class DetailsFragment : Fragment() {
 
     companion object {
 
@@ -29,15 +28,24 @@ class DetailsFragment : BindingFragment<FragmentDetailsBinding>() {
             return newFragment
 
         }
+
+        // Тег для использования во FragmentManager
+        const val TAG = "DetailsFragment"
     }
 
     private lateinit var tabMediator: TabLayoutMediator
 
-    override fun createBinding(
+
+    private var _binding:FragmentDetailsBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-    ): FragmentDetailsBinding {
-        return FragmentDetailsBinding.inflate(inflater, container, false)
+        savedInstanceState: Bundle?
+    ): View? {
+       _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+       return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,6 +54,7 @@ class DetailsFragment : BindingFragment<FragmentDetailsBinding>() {
         val currentArg = requireArguments()
         val posterUrl = currentArg.getString(POSTER_KEY) ?: ""
         val movieId = currentArg.getString(MOVIE_ID_KEY) ?: ""
+
 
         binding.viewPager.adapter = DetailsViewPagerAdapter(
             fragmentManager = childFragmentManager,
@@ -68,6 +77,7 @@ class DetailsFragment : BindingFragment<FragmentDetailsBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabMediator.detach()
+        _binding = null
     }
 
 }

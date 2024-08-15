@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
@@ -19,15 +20,17 @@ import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
 import com.practicum.mymovies.ui.details.DetailsFragment
-import com.practicum.mymovies.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MoviesFragment : BindingFragment<FragmentMoviesBinding>() {
+class MoviesFragment : Fragment() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         fun newInstance() = MoviesFragment()
     }
+
+    private var _binding: FragmentMoviesBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModel<MoviesViewModel>()
 
@@ -38,15 +41,18 @@ class MoviesFragment : BindingFragment<FragmentMoviesBinding>() {
                 if (clickDebounce()) {
 
                     parentFragmentManager.commit {
-                        setReorderingAllowed(true)
-                        add(
+                        replace(
+                            //Указали, в каком контейнере работаем
                             R.id.rootFragmentContainerView,
+                            //Создали фрагмент
                             DetailsFragment.newInstance(
                                 poster = movie.image,
                                 movieId = movie.id
-                            )
+                            ),
+                            //Указали тэг фрагмента
+                            DetailsFragment.TAG
                         )
-                        addToBackStack(null)
+                        addToBackStack(DetailsFragment.TAG)
                     }
 
                 }
@@ -63,14 +69,16 @@ class MoviesFragment : BindingFragment<FragmentMoviesBinding>() {
 
     private var isClickAllowed = true
 
-    override fun createBinding(
+    private lateinit var textWatcher: TextWatcher
+
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-    ): FragmentMoviesBinding {
-        return FragmentMoviesBinding.inflate(inflater, container, false)
+        savedInstanceState: Bundle?,
+    ): View? {
+        _binding = FragmentMoviesBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
-    private lateinit var textWatcher: TextWatcher
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -109,6 +117,7 @@ class MoviesFragment : BindingFragment<FragmentMoviesBinding>() {
         textWatcher.let {
             binding.queryInput.removeTextChangedListener(it)
         }
+        _binding = null
     }
 
 

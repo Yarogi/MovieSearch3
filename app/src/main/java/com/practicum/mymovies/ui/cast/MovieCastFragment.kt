@@ -7,17 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
-import com.practicum.mymovies.databinding.ActivityMoviesCastBinding
+import com.practicum.mymovies.databinding.FragmentMoviesCastBinding
 import com.practicum.mymovies.presentation.cast.MovieCastViewModel
 import com.practicum.mymovies.presentation.cast.MoviesCastRVItem
 import com.practicum.mymovies.presentation.cast.MoviesCastState
-import com.practicum.mymovies.util.BindingFragment
+
 import com.practicum.mymovies.util.invisible
 import com.practicum.mymovies.util.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class MovieCastFragment : BindingFragment<ActivityMoviesCastBinding>() {
+class MovieCastFragment : Fragment() {
 
     companion object {
 
@@ -35,6 +35,9 @@ class MovieCastFragment : BindingFragment<ActivityMoviesCastBinding>() {
         }
     }
 
+    private var _binding: FragmentMoviesCastBinding? = null
+    private val binding get() = _binding!!
+
     private val moviesCastViewModel: MovieCastViewModel by viewModel {
         parametersOf(requireArguments().getString(ARGS_MOVIE_ID) ?: "")
     }
@@ -44,11 +47,18 @@ class MovieCastFragment : BindingFragment<ActivityMoviesCastBinding>() {
         movieCastPersonDelegate()
     )
 
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-    ): ActivityMoviesCastBinding {
-        return ActivityMoviesCastBinding.inflate(inflater, container, false)
+        savedInstanceState: Bundle?,
+    ): View? {
+        _binding = FragmentMoviesCastBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
