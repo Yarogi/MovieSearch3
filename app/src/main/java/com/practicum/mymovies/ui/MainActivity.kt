@@ -19,8 +19,10 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        supportFragmentManager.commit {
-            add(binding.fragmentContainerView.id, MoviesFragment.newInstance())
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                add(binding.mainFragmentContainerView.id, MoviesFragment.newInstance())
+            }
         }
 
     }

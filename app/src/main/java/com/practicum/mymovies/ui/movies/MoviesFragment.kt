@@ -36,7 +36,7 @@ class MoviesFragment : BindingFragment<ActivityMoviesBinding>() {
                 parentFragmentManager.commit {
                     setReorderingAllowed(true)
                     add(
-                        R.id.fragment_container_view,
+                        R.id.main_fragment_container_view,
                         DetailsFragment.newInstance(
                             poster = movie.image,
                             movieId = movie.id
