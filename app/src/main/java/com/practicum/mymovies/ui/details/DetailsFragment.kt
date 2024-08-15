@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.mymovies.R
-import com.practicum.mymovies.databinding.ActivityDetailsBinding
+import com.practicum.mymovies.databinding.FragmentDetailsBinding
 import com.practicum.mymovies.util.BindingFragment
 
-class DetailsFragment : BindingFragment<ActivityDetailsBinding>() {
+class DetailsFragment : BindingFragment<FragmentDetailsBinding>() {
 
     companion object {
 
@@ -36,8 +36,8 @@ class DetailsFragment : BindingFragment<ActivityDetailsBinding>() {
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
-    ): ActivityDetailsBinding {
-        return ActivityDetailsBinding.inflate(inflater, container, false)
+    ): FragmentDetailsBinding {
+        return FragmentDetailsBinding.inflate(inflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
