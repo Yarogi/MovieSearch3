@@ -50,7 +50,7 @@ class AboutFragment : Fragment() {
             requireActivity().supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 add(
-                    R.id.main_fragment_container_view,
+                    R.id.rootFragmentContainerView,
                     MovieCastFragment.newInstance(
                         movieId = requireArguments().getString(MOVIE_ID).orEmpty()
                     )

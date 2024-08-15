@@ -13,7 +13,7 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.mymovies.R
-import com.practicum.mymovies.databinding.ActivityMoviesBinding
+import com.practicum.mymovies.databinding.FragmentMoviesBinding
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
@@ -22,29 +22,34 @@ import com.practicum.mymovies.ui.details.DetailsFragment
 import com.practicum.mymovies.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MoviesFragment : BindingFragment<ActivityMoviesBinding>() {
+class MoviesFragment : BindingFragment<FragmentMoviesBinding>() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         fun newInstance() = MoviesFragment()
     }
 
+    private val viewModel by viewModel<MoviesViewModel>()
+
     private val adapter = ListDelegationAdapter(movieItemDelegate(
         object : MovieClickListener {
             override fun onMovieClick(movie: Movie) {
 
-                parentFragmentManager.commit {
-                    setReorderingAllowed(true)
-                    add(
-                        R.id.main_fragment_container_view,
-                        DetailsFragment.newInstance(
-                            poster = movie.image,
-                            movieId = movie.id
-                        )
-                    )
-                    addToBackStack(null)
-                }
+                if (clickDebounce()) {
 
+                    parentFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        add(
+                            R.id.rootFragmentContainerView,
+                            DetailsFragment.newInstance(
+                                poster = movie.image,
+                                movieId = movie.id
+                            )
+                        )
+                        addToBackStack(null)
+                    }
+
+                }
             }
 
             override fun onFavoriteToggleClick(movie: Movie) {
@@ -54,16 +59,15 @@ class MoviesFragment : BindingFragment<ActivityMoviesBinding>() {
         }
     ))
 
-    private var isClickAllowed = true
-
     private val handler = Handler(Looper.getMainLooper())
-    private val viewModel by viewModel<MoviesViewModel>()
+
+    private var isClickAllowed = true
 
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
-    ): ActivityMoviesBinding {
-        return ActivityMoviesBinding.inflate(inflater, container, false)
+    ): FragmentMoviesBinding {
+        return FragmentMoviesBinding.inflate(inflater, container, false)
     }
 
     private lateinit var textWatcher: TextWatcher
@@ -72,7 +76,11 @@ class MoviesFragment : BindingFragment<ActivityMoviesBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.moviesList.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
         binding.moviesList.adapter = adapter
 
 
@@ -105,7 +113,7 @@ class MoviesFragment : BindingFragment<ActivityMoviesBinding>() {
 
 
     private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 
     private fun render(state: MoviesState) {
