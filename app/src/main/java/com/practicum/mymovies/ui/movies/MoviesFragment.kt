@@ -14,12 +14,14 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.mymovies.R
+import com.practicum.mymovies.core.navigation.Router
 import com.practicum.mymovies.databinding.FragmentMoviesBinding
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
 import com.practicum.mymovies.ui.details.DetailsFragment
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment() {
@@ -34,26 +36,21 @@ class MoviesFragment : Fragment() {
 
     private val viewModel by viewModel<MoviesViewModel>()
 
+    private val router: Router by inject()
+
     private val adapter = ListDelegationAdapter(movieItemDelegate(
         object : MovieClickListener {
             override fun onMovieClick(movie: Movie) {
 
                 if (clickDebounce()) {
 
-                    parentFragmentManager.commit {
-                        replace(
-                            //Указали, в каком контейнере работаем
-                            R.id.rootFragmentContainerView,
-                            //Создали фрагмент
-                            DetailsFragment.newInstance(
-                                poster = movie.image,
-                                movieId = movie.id
-                            ),
-                            //Указали тэг фрагмента
-                            DetailsFragment.TAG
+                    router.openFragment(
+                        DetailsFragment.newInstance(
+                            poster = movie.image,
+                            movieId = movie.id
                         )
-                        addToBackStack(DetailsFragment.TAG)
-                    }
+                    )
+
 
                 }
             }
