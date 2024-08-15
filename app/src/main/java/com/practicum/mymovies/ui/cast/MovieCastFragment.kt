@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
@@ -25,13 +26,10 @@ class MovieCastFragment : Fragment() {
 
         fun newInstance(movieId: String): Fragment {
 
-            val args = Bundle()
-            args.putString(ARGS_MOVIE_ID, movieId)
+            return MovieCastFragment().apply {
+                arguments = bundleOf(ARGS_MOVIE_ID to movieId)
+            }
 
-            val fragment = MovieCastFragment()
-            fragment.arguments = args
-
-            return fragment
         }
     }
 
@@ -65,7 +63,7 @@ class MovieCastFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.moviesCastRecyclerView.adapter = adapter
-        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.moviesCastRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         moviesCastViewModel.observeState().observe(viewLifecycleOwner) {
             when (it) {
