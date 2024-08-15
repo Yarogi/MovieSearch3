@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 
 interface Router {
 
-    val navigationHolder: NavigationHolder
+    val navigationHolder: NavigatorHolder
 
     fun openFragment(fragment:Fragment)
 

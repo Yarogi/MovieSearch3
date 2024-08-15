@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 /**
  * Сущность для хранения ссылки на Navigator.
  */
-interface NavigationHolder {
+interface NavigatorHolder {
 
     fun attachNavigator(navigator: Navigator)
     fun dettachNavigator()
