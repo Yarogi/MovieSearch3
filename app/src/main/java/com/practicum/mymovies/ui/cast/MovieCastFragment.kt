@@ -31,6 +31,9 @@ class MovieCastFragment : Fragment() {
             }
 
         }
+
+        const val TAG = "MoviesCastFragment"
+
     }
 
     private var _binding: FragmentMoviesCastBinding? = null

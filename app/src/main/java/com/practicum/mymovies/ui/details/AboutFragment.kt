@@ -46,6 +46,16 @@ class AboutFragment : Fragment() {
 
         binding.showCastButton.setOnClickListener {
 
+            parentFragment?.parentFragmentManager?.commit {
+                replace(
+                    R.id.rootFragmentContainerView,
+                    MovieCastFragment.newInstance(
+                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+                    ),
+                    MovieCastFragment.TAG
+                )
+                addToBackStack(MovieCastFragment.TAG)
+            }
 
             requireActivity().supportFragmentManager.commit {
                 setReorderingAllowed(true)
