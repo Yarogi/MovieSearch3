@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
 import com.practicum.mymovies.R
-import com.practicum.mymovies.core.navigation.Router
 import com.practicum.mymovies.databinding.FragmentAboutBinding
 import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.presentation.details.AboutState
@@ -17,7 +15,6 @@ import com.practicum.mymovies.presentation.details.AboutViewModel
 import com.practicum.mymovies.ui.cast.MovieCastFragment
 import com.practicum.mymovies.util.invisible
 import com.practicum.mymovies.util.visible
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
