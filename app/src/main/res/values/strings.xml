@@ -16,4 +16,9 @@
     <string name="movies">Фильмы</string>
     <string name="presons">Люди</string>
     <string name="info">Инфо</string>
+
+    <string name="label">IMDB Movies Search</string>
+    <string name="version">Версия: 1.0</string>
+    <string name="developer">Разработчик: Хомяк Байтс</string>
+
 </resources>
