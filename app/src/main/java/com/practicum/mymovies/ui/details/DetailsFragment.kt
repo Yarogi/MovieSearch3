@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.practicum.mymovies.R
@@ -16,36 +17,24 @@ class DetailsFragment : Fragment() {
         private const val POSTER_KEY = "poster"
         private const val MOVIE_ID_KEY = "id"
 
-        fun newInstance(poster: String, movieId: String): Fragment {
-
-            val bundle = Bundle()
-            bundle.putString(POSTER_KEY, poster)
-            bundle.putString(MOVIE_ID_KEY, movieId)
-
-            val newFragment = DetailsFragment()
-            newFragment.arguments = bundle
-
-            return newFragment
-
+        fun createArgs(poster: String, movieId: String): Bundle {
+            return bundleOf(POSTER_KEY to poster, MOVIE_ID_KEY to movieId)
         }
-
-        // Тег для использования во FragmentManager
-        const val TAG = "DetailsFragment"
     }
 
     private lateinit var tabMediator: TabLayoutMediator
 
 
-    private var _binding:FragmentDetailsBinding? = null
+    private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-       _binding = FragmentDetailsBinding.inflate(inflater, container, false)
-       return binding.root
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

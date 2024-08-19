@@ -24,15 +24,9 @@ class MovieCastFragment : Fragment() {
 
         private const val ARGS_MOVIE_ID = "movie_id"
 
-        fun newInstance(movieId: String): Fragment {
-
-            return MovieCastFragment().apply {
-                arguments = bundleOf(ARGS_MOVIE_ID to movieId)
-            }
-
+        fun createArguments(movieId: String): Bundle {
+            return bundleOf(ARGS_MOVIE_ID to movieId)
         }
-
-        const val TAG = "MoviesCastFragment"
 
     }
 
