@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.practicum.mymovies.R
 import com.practicum.mymovies.core.navigation.Router
 import com.practicum.mymovies.databinding.FragmentAboutBinding
@@ -21,13 +23,23 @@ import org.koin.core.parameter.parametersOf
 
 class AboutFragment : Fragment() {
 
+    companion object {
+        private const val MOVIE_ID = "movieId"
+
+        fun newInstance(movieId: String) = AboutFragment().apply {
+            arguments = createArgs(movieId)
+        }
+
+        fun createArgs(movieId: String): Bundle {
+            return bundleOf(MOVIE_ID to movieId)
+        }
+    }
+
     private val aboutViewModel: AboutViewModel by viewModel {
         parametersOf(requireArguments().getString(MOVIE_ID))
     }
 
     private lateinit var binding: FragmentAboutBinding
-
-    private val router: Router by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,23 +62,13 @@ class AboutFragment : Fragment() {
 
         binding.showCastButton.setOnClickListener {
 
-            router.openFragment(
-                MovieCastFragment.newInstance(
-                    movieId = requireArguments().getString(MOVIE_ID).orEmpty()
+
+            findNavController().navigate(
+                R.id.action_detailsFragment_to_movieCastFragment,
+                MovieCastFragment.createArguments(
+                    requireArguments().getString(MOVIE_ID).orEmpty()
                 )
             )
-
-
-            requireActivity().supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add(
-                    R.id.rootFragmentContainerView,
-                    MovieCastFragment.newInstance(
-                        movieId = requireArguments().getString(MOVIE_ID).orEmpty()
-                    )
-                )
-                addToBackStack(null)
-            }
 
         }
     }
@@ -92,17 +94,6 @@ class AboutFragment : Fragment() {
             writerValue.text = movieDetails.writers
             castValue.text = movieDetails.stars
             plot.text = movieDetails.plot
-        }
-    }
-
-
-    companion object {
-        private const val MOVIE_ID = "movieId"
-
-        fun newInstance(movieId: String) = AboutFragment().apply {
-            arguments = Bundle().apply {
-                putString(MOVIE_ID, movieId)
-            }
         }
     }
 

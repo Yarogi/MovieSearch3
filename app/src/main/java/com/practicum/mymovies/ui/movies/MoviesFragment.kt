@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.mymovies.R
@@ -28,7 +29,6 @@ class MoviesFragment : Fragment() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        fun newInstance() = MoviesFragment()
     }
 
     private var _binding: FragmentMoviesBinding? = null
@@ -36,16 +36,15 @@ class MoviesFragment : Fragment() {
 
     private val viewModel by viewModel<MoviesViewModel>()
 
-    private val router: Router by inject()
-
     private val adapter = ListDelegationAdapter(movieItemDelegate(
         object : MovieClickListener {
             override fun onMovieClick(movie: Movie) {
 
                 if (clickDebounce()) {
 
-                    router.openFragment(
-                        DetailsFragment.newInstance(
+                    findNavController().navigate(
+                        R.id.action_moviesFragment_to_detailsFragment,
+                        DetailsFragment.createArgs(
                             poster = movie.image,
                             movieId = movie.id
                         )
