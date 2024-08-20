@@ -12,15 +12,16 @@ val viewModelModule = module {
 
     viewModel {
         MoviesViewModel(
-            moviesInteractor =  get(),
-            application =  androidApplication())
+            moviesInteractor = get(),
+            application = androidApplication()
+        )
     }
 
-    viewModel {(movieId: String) ->
+    viewModel { (movieId: String) ->
         AboutViewModel(movieId, get())
     }
 
-    viewModel {(posterUrl: String) ->
+    viewModel { (posterUrl: String) ->
         PosterViewModel(posterUrl)
     }
 
