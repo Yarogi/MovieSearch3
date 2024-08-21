@@ -9,9 +9,9 @@ class NamesInteractorImpl(private val repository: NamesRepository) : NamesIntera
 
     private val executor = Executors.newCachedThreadPool()
 
-    override fun search(expression: String, consumer: NamesInteractor.NamesSearchConsumer) {
+    override fun searchNames(expression: String, consumer: NamesInteractor.NamesSearchConsumer) {
         executor.execute {
-            when (val resource = repository.search(expression)) {
+            when (val resource = repository.searchNames(expression)) {
                 is Resource.Error -> consumer.consume(null, resource.message)
                 is Resource.Success -> consumer.consume(resource.data, null)
             }

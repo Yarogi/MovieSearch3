@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/label"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"

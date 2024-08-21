@@ -5,6 +5,6 @@ import com.practicum.mymovies.util.Resource
 
 interface NamesRepository {
 
-    fun search(expression: String): Resource<List<Person>>
+    fun searchNames(expression: String): Resource<List<Person>>
 
 }

@@ -11,7 +11,7 @@ class NamesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val converter: NamesToPersonConverter,
 ) : NamesRepository {
-    override fun search(expression: String): Resource<List<Person>> {
+    override fun searchNames(expression: String): Resource<List<Person>> {
 
         val response = networkClient.doRequest(NamesSearchRequest(expression))
         return when(response.resultCode){

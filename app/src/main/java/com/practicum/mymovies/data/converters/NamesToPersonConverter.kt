@@ -1,6 +1,6 @@
 package com.practicum.mymovies.data.converters
 
-import com.practicum.mymovies.data.dto.NamesDto
+import com.practicum.mymovies.data.dto.PersonDto
 import com.practicum.mymovies.data.dto.NamesSearchResponse
 import com.practicum.mymovies.domain.models.Person
 
@@ -12,12 +12,12 @@ class NamesToPersonConverter {
         }
     }
 
-    fun nameToPerson(namesDto: NamesDto): Person {
+    fun nameToPerson(namesDto: PersonDto): Person {
         return Person(
             id = namesDto.id,
             title = namesDto.title,
             description = namesDto.description,
-            image = namesDto.image
+            photoUrl = namesDto.image
         )
     }
 
