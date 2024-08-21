@@ -70,6 +70,11 @@ class NamesFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        textWatcher?.let { binding.queryInput.removeTextChangedListener(it) }
+    }
+
     private fun render(state: NamesState) {
         when (state) {
             is NamesState.Content -> showContent(state.persons)
