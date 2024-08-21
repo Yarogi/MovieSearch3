@@ -12,4 +12,13 @@
     <string name="writer">Сценарист:</string>
     <string name="cast">В ролях:</string>
     <string name="plot">Сюжет:</string>
+
+    <string name="movies">Фильмы</string>
+    <string name="names">Люди</string>
+    <string name="info">Инфо</string>
+
+    <string name="label">IMDB Movies Search</string>
+    <string name="version">Версия: 1.0</string>
+    <string name="developer">Разработчик: Хомяк Байтс</string>
+
 </resources>
