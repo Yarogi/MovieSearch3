@@ -21,6 +21,7 @@ import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
 import com.practicum.mymovies.ui.details.DetailsFragment
+import com.practicum.mymovies.util.debounce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,19 +40,7 @@ class MoviesFragment : Fragment() {
     private val adapter = ListDelegationAdapter(movieItemDelegate(
         object : MovieClickListener {
             override fun onMovieClick(movie: Movie) {
-
-                if (clickDebounce()) {
-
-                    findNavController().navigate(
-                        R.id.action_moviesFragment_to_detailsFragment,
-                        DetailsFragment.createArgs(
-                            poster = movie.image,
-                            movieId = movie.id
-                        )
-                    )
-
-
-                }
+                onMovieClickDebounce(movie)
             }
 
             override fun onFavoriteToggleClick(movie: Movie) {
@@ -65,6 +54,9 @@ class MoviesFragment : Fragment() {
 
     private lateinit var textWatcher: TextWatcher
 
+    //debouncer нажатия
+    private lateinit var onMovieClickDebounce: (Movie) -> Unit
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,6 +68,19 @@ class MoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Debouncer init
+        onMovieClickDebounce = debounce<Movie>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { movie ->
+            findNavController().navigate(
+                R.id.action_moviesFragment_to_detailsFragment,
+                DetailsFragment.createArgs(movie.id, movie.image)
+            )
+        }
+        //
 
         binding.moviesList.layoutManager =
             LinearLayoutManager(
