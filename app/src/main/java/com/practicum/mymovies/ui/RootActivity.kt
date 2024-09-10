@@ -1,6 +1,7 @@
 package com.practicum.mymovies.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
@@ -34,6 +35,10 @@ class RootActivity : AppCompatActivity() {
                         || destination.id == R.id.infoFragment
         }
 
+    }
+
+    fun animateBottomNavigationView() {
+        binding.bottomNavigationView.visibility = View.GONE
     }
 
 }

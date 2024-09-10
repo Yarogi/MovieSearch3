@@ -15,11 +15,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.mymovies.R
+import com.practicum.mymovies.core.ui.RVItem
 import com.practicum.mymovies.databinding.FragmentMoviesBinding
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
+import com.practicum.mymovies.ui.RootActivity
 import com.practicum.mymovies.ui.details.DetailsFragment
 import com.practicum.mymovies.util.debounce
 import kotlinx.coroutines.delay
@@ -37,25 +39,15 @@ class MoviesFragment : Fragment() {
 
     private val viewModel by viewModel<MoviesViewModel>()
 
-    private val adapter = ListDelegationAdapter(movieItemDelegate(
-        object : MovieClickListener {
-            override fun onMovieClick(movie: Movie) {
-                onMovieClickDebounce(movie)
-            }
-
-            override fun onFavoriteToggleClick(movie: Movie) {
-                viewModel.toggleFavorite(movie = movie)
-            }
-
-        }
-    ))
-
     private var isClickAllowed = true
 
     private lateinit var textWatcher: TextWatcher
 
     //debouncer нажатия
     private lateinit var onMovieClickDebounce: (Movie) -> Unit
+
+    //Анимация
+    private var adapter: ListDelegationAdapter<List<RVItem>>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,6 +72,20 @@ class MoviesFragment : Fragment() {
                 DetailsFragment.createArgs(movie.id, movie.image)
             )
         }
+        //
+        adapter = ListDelegationAdapter(movieItemDelegate(
+            object : MovieClickListener {
+                override fun onMovieClick(movie: Movie) {
+                    (activity as RootActivity).animateBottomNavigationView()
+                    onMovieClickDebounce(movie)
+                }
+
+                override fun onFavoriteToggleClick(movie: Movie) {
+                    viewModel.toggleFavorite(movie = movie)
+                }
+
+            }
+        ))
         //
 
         binding.moviesList.layoutManager =
@@ -116,6 +122,8 @@ class MoviesFragment : Fragment() {
         textWatcher.let {
             binding.queryInput.removeTextChangedListener(it)
         }
+        adapter = null
+        binding.moviesList.adapter = null
         _binding = null
     }
 
@@ -156,8 +164,8 @@ class MoviesFragment : Fragment() {
         binding.placeholderMessage.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
 
-        adapter.items = movies.map { movie -> MovieRVItem.MovieItem(movie) }
-        adapter.notifyDataSetChanged()
+        adapter?.items = movies.map { movie -> MovieRVItem.MovieItem(movie) }
+        adapter?.notifyDataSetChanged()
 
     }
 
