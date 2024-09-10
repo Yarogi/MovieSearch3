@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
@@ -20,6 +21,8 @@ import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
 import com.practicum.mymovies.ui.details.DetailsFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment() {
@@ -57,8 +60,6 @@ class MoviesFragment : Fragment() {
 
         }
     ))
-
-    private val handler = Handler(Looper.getMainLooper())
 
     private var isClickAllowed = true
 
@@ -158,8 +159,14 @@ class MoviesFragment : Fragment() {
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
+
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+
         }
         return current
     }
