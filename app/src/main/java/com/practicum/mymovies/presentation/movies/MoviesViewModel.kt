@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -71,6 +72,9 @@ class MoviesViewModel(
     }
 
     private fun processResultSearch(foundMovies: List<Movie>?, errorMessage: String?) {
+
+        Log.d("MY_DEBUG", "Ответ получен: найдено ${foundMovies?.size ?: 0}")
+
         val movies = mutableListOf<Movie>()
         if (foundMovies != null) {
             movies.addAll(foundMovies)

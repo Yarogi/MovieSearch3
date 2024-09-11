@@ -16,7 +16,12 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
 
         return repository
             .searchMovies(expression)
-            .map { result -> mapResult(result) }
+            .map { result ->
+                when (result) {
+                    is Resource.Success -> Pair(result.data, null)
+                    is Resource.Error -> Pair(null, result.message)
+                }
+            }
 
     }
 
