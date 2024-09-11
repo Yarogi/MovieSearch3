@@ -13,6 +13,8 @@ import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.MoviesInteractor
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.util.debounce
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MoviesViewModel(
     private val moviesInteractor: MoviesInteractor,
@@ -56,50 +58,51 @@ class MoviesViewModel(
 
     }
 
-
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
             renderState(MoviesState.Loading)
 
-            moviesInteractor.searchMovies(
-                newSearchText,
-                object : MoviesInteractor.MoviesSearchConsumer {
-                    override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
-                        val movies = mutableListOf<Movie>()
-                        if (foundMovies != null) {
-                            movies.addAll(foundMovies)
-                        }
-
-                        when {
-                            errorMessage != null -> {
-                                renderState(
-                                    MoviesState.Error(
-                                        message = getApplication<Application>().getString(R.string.something_went_wrong),
-                                    )
-                                )
-                                showToast.postValue(errorMessage ?: "")
-                            }
-
-                            movies.isEmpty() -> {
-                                renderState(
-                                    MoviesState.Empty(
-                                        message = getApplication<Application>().getString(R.string.nothing_found),
-                                    )
-                                )
-                            }
-
-                            else -> {
-                                renderState(
-                                    MoviesState.Content(
-                                        movies = movies,
-                                    )
-                                )
-                            }
-                        }
-
-                    }
-                })
+            viewModelScope.launch {
+                moviesInteractor
+                    .searchMovies(newSearchText)
+                    .collect { pair -> processResultSearch(pair.first, pair.second) }
+            }
         }
+    }
+
+    private fun processResultSearch(foundMovies: List<Movie>?, errorMessage: String?) {
+        val movies = mutableListOf<Movie>()
+        if (foundMovies != null) {
+            movies.addAll(foundMovies)
+        }
+
+        when {
+            errorMessage != null -> {
+                renderState(
+                    MoviesState.Error(
+                        message = getApplication<Application>().getString(R.string.something_went_wrong),
+                    )
+                )
+                showToast.postValue(errorMessage ?: "")
+            }
+
+            movies.isEmpty() -> {
+                renderState(
+                    MoviesState.Empty(
+                        message = getApplication<Application>().getString(R.string.nothing_found),
+                    )
+                )
+            }
+
+            else -> {
+                renderState(
+                    MoviesState.Content(
+                        movies = movies,
+                    )
+                )
+            }
+        }
+
     }
 
     private fun renderState(state: MoviesState) {

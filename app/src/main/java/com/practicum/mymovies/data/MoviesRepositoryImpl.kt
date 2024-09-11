@@ -13,6 +13,8 @@ import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.domain.models.MovieCast
 import com.practicum.mymovies.util.LocalStorage
 import com.practicum.mymovies.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
@@ -20,9 +22,9 @@ class MoviesRepositoryImpl(
     private val localStorage: LocalStorage,
 ) : MoviesRepository {
 
-    override fun searchMovies(expression: String): Resource<List<Movie>> {
-        val response = networkClient.doRequest(MoviesSearchRequest(expression))
-        return when (response.resultCode) {
+    override fun searchMovies(expression: String): Flow<Resource<List<Movie>>>  = flow{
+        val response = networkClient.doRequestSuspend(MoviesSearchRequest(expression))
+        when (response.resultCode) {
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
@@ -48,9 +50,9 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
-        val response = networkClient.doRequest(MovieDetailsRequest(movieId))
-        return when (response.resultCode) {
+    override fun getMovieDetails(movieId: String): Flow<Resource<MovieDetails>> = flow{
+        val response = networkClient.doRequestSuspend(MovieDetailsRequest(movieId))
+        when (response.resultCode) {
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
@@ -72,9 +74,9 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun getMovieCast(movieId: String): Resource<MovieCast> {
-        val response = networkClient.doRequest(MovieCastRequest(movieId))
-        return when (response.resultCode) {
+    override fun getMovieCast(movieId: String): Flow<Resource<MovieCast>> = flow{
+        val response = networkClient.doRequestSuspend(MovieCastRequest(movieId))
+        when (response.resultCode) {
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }

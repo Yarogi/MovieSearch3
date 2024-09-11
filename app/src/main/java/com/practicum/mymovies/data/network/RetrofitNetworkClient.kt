@@ -18,45 +18,25 @@ class RetrofitNetworkClient(
     private val context: Context,
 ) : NetworkClient {
 
-    override fun doRequest(dto: Any): Response {
-        if (isConnected() == false) {
-            return Response().apply { resultCode = -1 }
-        }
-
-        if ((dto !is MoviesSearchRequest)
-            && (dto !is MovieDetailsRequest)
-            && (dto !is MovieCastRequest)
-            && (dto !is NamesSearchRequest)
-        ) {
-            return Response().apply { resultCode = 400 }
-        }
-
-        val response = when (dto) {
-            is MoviesSearchRequest -> imdbService.searchMovies(dto.expression).execute()
-            is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId).execute()
-            else -> imdbService.getFullCast((dto as MovieCastRequest).movieId).execute()
-
-        }
-
-        val body = response.body()
-        return if (body != null) {
-            body.apply { resultCode = response.code() }
-        } else {
-            Response().apply { resultCode = response.code() }
-        }
-    }
-
     override suspend fun doRequestSuspend(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if (dto !is NamesSearchRequest) {
+        if (dto !is NamesSearchRequest
+            && dto !is MoviesSearchRequest
+            && dto !is MovieDetailsRequest
+            && dto !is MovieCastRequest) {
             return Response().apply { resultCode = 400 }
         }
 
         return withContext(Dispatchers.IO) {
             try {
-                val response = imdbService.searchNames(dto.expression)
+                val response = when(dto){
+                    is NamesSearchRequest -> imdbService.searchNames(dto.expression)
+                    is MoviesSearchRequest -> imdbService.searchMovies(dto.expression)
+                    is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId)
+                    else -> imdbService.getMovieDetails((dto as MovieCastRequest).movieId)
+                }
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
