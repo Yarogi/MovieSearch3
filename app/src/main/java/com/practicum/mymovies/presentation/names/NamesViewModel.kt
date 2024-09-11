@@ -7,10 +7,15 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.NamesInteractor
 import com.practicum.mymovies.domain.models.Person
 import com.practicum.mymovies.presentation.movies.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NamesViewModel(
     private val context: Context,
@@ -19,10 +24,7 @@ class NamesViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
-
-    private val handler = Handler(Looper.getMainLooper())
 
     private val stateLiveData = MutableLiveData<NamesState>()
     val observeState: LiveData<NamesState> = stateLiveData
@@ -32,27 +34,21 @@ class NamesViewModel(
 
     private var latestSearchText: String? = null
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+    private var searchJob: Job? = null
 
     fun searchDebounce(searchText: String) {
 
         if (searchText == latestSearchText) {
             return
         }
-
         this.latestSearchText = searchText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        searchJob?.cancel()
 
-        val searchRunnable = Runnable { searchRequest(searchText) }
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(searchText)
+        }
 
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime
-        )
 
     }
 

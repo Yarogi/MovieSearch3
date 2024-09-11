@@ -10,16 +10,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.practicum.mymovies.R
+import com.practicum.mymovies.core.ui.RVItem
 import com.practicum.mymovies.databinding.FragmentMoviesBinding
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.presentation.movies.MovieRVItem
 import com.practicum.mymovies.presentation.movies.MoviesState
 import com.practicum.mymovies.presentation.movies.MoviesViewModel
+import com.practicum.mymovies.ui.RootActivity
 import com.practicum.mymovies.ui.details.DetailsFragment
+import com.practicum.mymovies.util.debounce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment() {
@@ -33,36 +39,15 @@ class MoviesFragment : Fragment() {
 
     private val viewModel by viewModel<MoviesViewModel>()
 
-    private val adapter = ListDelegationAdapter(movieItemDelegate(
-        object : MovieClickListener {
-            override fun onMovieClick(movie: Movie) {
-
-                if (clickDebounce()) {
-
-                    findNavController().navigate(
-                        R.id.action_moviesFragment_to_detailsFragment,
-                        DetailsFragment.createArgs(
-                            poster = movie.image,
-                            movieId = movie.id
-                        )
-                    )
-
-
-                }
-            }
-
-            override fun onFavoriteToggleClick(movie: Movie) {
-                viewModel.toggleFavorite(movie = movie)
-            }
-
-        }
-    ))
-
-    private val handler = Handler(Looper.getMainLooper())
-
     private var isClickAllowed = true
 
     private lateinit var textWatcher: TextWatcher
+
+    //debouncer нажатия
+    private lateinit var onMovieClickDebounce: (Movie) -> Unit
+
+    //Анимация
+    private var adapter: ListDelegationAdapter<List<RVItem>>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,6 +60,33 @@ class MoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Debouncer init
+        onMovieClickDebounce = debounce<Movie>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { movie ->
+            findNavController().navigate(
+                R.id.action_moviesFragment_to_detailsFragment,
+                DetailsFragment.createArgs(movie.id, movie.image)
+            )
+        }
+        //
+        adapter = ListDelegationAdapter(movieItemDelegate(
+            object : MovieClickListener {
+                override fun onMovieClick(movie: Movie) {
+                    (activity as RootActivity).animateBottomNavigationView()
+                    onMovieClickDebounce(movie)
+                }
+
+                override fun onFavoriteToggleClick(movie: Movie) {
+                    viewModel.toggleFavorite(movie = movie)
+                }
+
+            }
+        ))
+        //
 
         binding.moviesList.layoutManager =
             LinearLayoutManager(
@@ -110,6 +122,8 @@ class MoviesFragment : Fragment() {
         textWatcher.let {
             binding.queryInput.removeTextChangedListener(it)
         }
+        adapter = null
+        binding.moviesList.adapter = null
         _binding = null
     }
 
@@ -150,16 +164,22 @@ class MoviesFragment : Fragment() {
         binding.placeholderMessage.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
 
-        adapter.items = movies.map { movie -> MovieRVItem.MovieItem(movie) }
-        adapter.notifyDataSetChanged()
+        adapter?.items = movies.map { movie -> MovieRVItem.MovieItem(movie) }
+        adapter?.notifyDataSetChanged()
 
     }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
+
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+
         }
         return current
     }

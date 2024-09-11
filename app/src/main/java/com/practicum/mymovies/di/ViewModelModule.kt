@@ -5,6 +5,7 @@ import com.practicum.mymovies.presentation.movies.MoviesViewModel
 import com.practicum.mymovies.presentation.cast.MovieCastViewModel
 import com.practicum.mymovies.presentation.details.PosterViewModel
 import com.practicum.mymovies.presentation.names.NamesViewModel
+import com.practicum.mymovies.presentation.player.PlayerViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -39,6 +40,10 @@ val viewModelModule = module {
             context = androidContext(),
             namesInteractor = get()
         )
+    }
+
+    viewModel{
+        PlayerViewModel()
     }
 
 }

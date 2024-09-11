@@ -17,6 +17,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_moviesFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
 
     </fragment>
     <fragment
@@ -47,4 +50,9 @@
         android:name="com.practicum.mymovies.ui.names.NamesFragment"
         android:label="fragment_names"
         tools:layout="@layout/fragment_names" />
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.practicum.mymovies.ui.player.PlayerActivity"
+        android:label="activity_player"
+        tools:layout="@layout/activity_player" />
 </navigation>
