@@ -1,9 +1,6 @@
 package com.practicum.mymovies.presentation.names
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +10,6 @@ import com.practicum.mymovies.domain.api.NamesInteractor
 import com.practicum.mymovies.domain.models.Person
 import com.practicum.mymovies.presentation.movies.SingleLiveEvent
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
