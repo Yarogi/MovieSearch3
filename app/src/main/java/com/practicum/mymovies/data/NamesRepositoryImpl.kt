@@ -6,15 +6,17 @@ import com.practicum.mymovies.data.dto.NamesSearchResponse
 import com.practicum.mymovies.domain.api.NamesRepository
 import com.practicum.mymovies.domain.models.Person
 import com.practicum.mymovies.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class NamesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val converter: NamesToPersonConverter,
 ) : NamesRepository {
-    override fun searchNames(expression: String): Resource<List<Person>> {
+    override fun searchNames(expression: String): Flow<Resource<List<Person>>> = flow {
 
-        val response = networkClient.doRequest(NamesSearchRequest(expression))
-        return when(response.resultCode){
+        val response = networkClient.doRequestSuspend(NamesSearchRequest(expression))
+        when (response.resultCode) {
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
