@@ -10,6 +10,8 @@ import com.practicum.mymovies.data.dto.MoviesSearchRequest
 import com.practicum.mymovies.data.dto.NamesSearchRequest
 import com.practicum.mymovies.data.dto.NamesSearchResponse
 import com.practicum.mymovies.data.dto.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClient(
     private val imdbService: IMDbApiService,
@@ -32,8 +34,8 @@ class RetrofitNetworkClient(
         val response = when (dto) {
             is MoviesSearchRequest -> imdbService.searchMovies(dto.expression).execute()
             is MovieDetailsRequest -> imdbService.getMovieDetails(dto.movieId).execute()
-            is MovieCastRequest -> imdbService.getFullCast(dto.movieId).execute()
-           else -> imdbService.searchNames((dto as NamesSearchRequest).expression).execute()
+            else -> imdbService.getFullCast((dto as MovieCastRequest).movieId).execute()
+
         }
 
         val body = response.body()
@@ -42,6 +44,25 @@ class RetrofitNetworkClient(
         } else {
             Response().apply { resultCode = response.code() }
         }
+    }
+
+    override suspend fun doRequestSuspend(dto: Any): Response {
+        if (isConnected() == false) {
+            return Response().apply { resultCode = -1 }
+        }
+        if (dto !is NamesSearchRequest) {
+            return Response().apply { resultCode = 400 }
+        }
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = imdbService.searchNames(dto.expression)
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
+            }
+        }
+
     }
 
     private fun isConnected(): Boolean {
