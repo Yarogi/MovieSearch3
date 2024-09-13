@@ -55,4 +55,10 @@
         android:name="com.practicum.mymovies.ui.player.PlayerActivity"
         android:label="activity_player"
         tools:layout="@layout/activity_player" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.practicum.mymovies.ui.history.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" />
 </navigation>
