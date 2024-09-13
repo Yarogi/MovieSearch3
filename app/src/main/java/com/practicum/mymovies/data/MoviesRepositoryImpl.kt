@@ -2,12 +2,16 @@ package com.practicum.mymovies.data
 
 import android.util.Log
 import com.practicum.mymovies.data.converters.MovieCastConverter
+import com.practicum.mymovies.data.converters.MovieDbConverter
+import com.practicum.mymovies.data.db.AppDatabase
 import com.practicum.mymovies.data.dto.MovieDetailsResponse
 import com.practicum.mymovies.data.dto.MovieDetailsRequest
 import com.practicum.mymovies.data.dto.MovieCastRequest
 import com.practicum.mymovies.data.dto.MovieCastResponse
+import com.practicum.mymovies.data.dto.MovieDto
 import com.practicum.mymovies.data.dto.MoviesSearchRequest
 import com.practicum.mymovies.data.dto.MoviesSearchResponse
+import com.practicum.mymovies.di.repositoryModule
 import com.practicum.mymovies.domain.api.MoviesRepository
 import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.domain.models.MovieDetails
@@ -16,43 +20,57 @@ import com.practicum.mymovies.util.LocalStorage
 import com.practicum.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.lang.Appendable
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
     private val movieCastConverter: MovieCastConverter,
     private val localStorage: LocalStorage,
+    //Зависимости db
+    private val appDatabase: AppDatabase,
+    private val movieDbConvertor: MovieDbConverter,
 ) : MoviesRepository {
 
     override fun searchMovies(expression: String): Flow<Resource<List<Movie>>> = flow {
-        Log.d("MY_DEBUG", "Начат поиск по $expression")
+
         val response = networkClient.doRequestSuspend(MoviesSearchRequest(expression))
-        Log.d("MY_DEBUG", "Ответ получен - код ${response.resultCode}")
 
-        emit(
-            when (response.resultCode) {
-                -1 -> {
-                    Resource.Error("Проверьте подключение к интернету")
-                }
+        when (response.resultCode) {
+            -1 -> {
+                emit(Resource.Error("Проверьте подключение к интернету"))
+            }
 
-                200 -> {
-                    val stored = localStorage.getSavedFavorites()
-
-                    Resource.Success((response as MoviesSearchResponse).results.map {
+            200 -> {
+                val stored = localStorage.getSavedFavorites()
+                with(response as MoviesSearchResponse) {
+                    val data = results.map {
                         Movie(
-                            id = it.id,
-                            resultType = it.resultType,
-                            image = it.image,
-                            title = it.title,
-                            description = it.description,
-                            inFavorite = stored.contains(it.id),
+                            it.id,
+                            it.resultType,
+                            it.image,
+                            it.title,
+                            it.description,
+                            stored.contains(it.id)
                         )
-                    })
-                }
+                    }
 
-                else -> {
-                    Resource.Error("Ошибка сервера")
+                    //сохраняем список фильмов в базу данных
+                    saveMovies(results)
+                    emit(Resource.Success(data))
+
                 }
             }
+
+            else -> {
+                emit(Resource.Error("Ошибка сервера"))
+            }
+        }
+
+    }
+
+    private suspend fun saveMovies(movies: List<MovieDto>) {
+        appDatabase.movieDao().insertMovies(
+            movies.map { movie -> movieDbConvertor.map(movie) }
         )
     }
 
@@ -65,12 +83,14 @@ class MoviesRepositoryImpl(
 
             200 -> {
                 with(response as MovieDetailsResponse) {
-                    emit(Resource.Success(
-                        MovieDetails(
-                            id, title, imDbRating, year,
-                            countries, genres, directors, writers, stars, plot
+                    emit(
+                        Resource.Success(
+                            MovieDetails(
+                                id, title, imDbRating, year,
+                                countries, genres, directors, writers, stars, plot
+                            )
                         )
-                    ))
+                    )
                 }
             }
 
@@ -88,9 +108,11 @@ class MoviesRepositoryImpl(
             }
 
             200 -> {
-                emit(Resource.Success(
-                    data = movieCastConverter.convert(response as MovieCastResponse)
-                ))
+                emit(
+                    Resource.Success(
+                        data = movieCastConverter.convert(response as MovieCastResponse)
+                    )
+                )
             }
 
             else -> {

@@ -26,6 +26,8 @@ val repositoryModule = module {
             networkClient = get(),
             movieCastConverter = get(),
             localStorage = get(),
+            appDatabase = get(),
+            movieDbConvertor = get()
         )
     }
 
