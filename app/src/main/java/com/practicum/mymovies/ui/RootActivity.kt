@@ -33,6 +33,7 @@ class RootActivity : AppCompatActivity() {
                 destination.id == R.id.moviesFragment
                         || destination.id == R.id.namesFragment
                         || destination.id == R.id.infoFragment
+                        || destination.id == R.id.historyFragment
         }
 
     }

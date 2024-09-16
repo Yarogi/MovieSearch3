@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.mymovies.R
 import com.practicum.mymovies.domain.api.HistoryInteractor
 import com.practicum.mymovies.domain.models.Movie
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(
@@ -21,6 +23,7 @@ class HistoryViewModel(
     fun fillData() {
         viewModelScope.launch {
             historyInteractor.historyMovies()
+                .flowOn(Dispatchers.IO)
                 .collect {
                     processedResult(it)
                 }

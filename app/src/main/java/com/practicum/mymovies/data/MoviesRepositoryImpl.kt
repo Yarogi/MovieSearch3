@@ -18,8 +18,10 @@ import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.domain.models.MovieCast
 import com.practicum.mymovies.util.LocalStorage
 import com.practicum.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.lang.Appendable
 
 class MoviesRepositoryImpl(
