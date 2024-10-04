@@ -6,7 +6,9 @@ import com.practicum.mymovies.domain.models.Movie
 import com.practicum.mymovies.domain.models.MovieCast
 import com.practicum.mymovies.domain.models.MovieDetails
 import com.practicum.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.Executors
 
@@ -16,6 +18,7 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
 
         return repository
             .searchMovies(expression)
+            .flowOn(Dispatchers.IO)
             .map { result ->
                 when (result) {
                     is Resource.Success -> Pair(result.data, null)

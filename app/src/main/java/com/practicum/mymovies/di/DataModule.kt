@@ -1,9 +1,11 @@
 package com.practicum.mymovies.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.mymovies.data.NetworkClient
 import com.practicum.mymovies.data.SearchHistoryStorage
+import com.practicum.mymovies.data.db.AppDatabase
 import com.practicum.mymovies.data.local.SharedPreferencesSearchHistoryStorage
 import com.practicum.mymovies.data.network.IMDbApiService
 import com.practicum.mymovies.data.network.RetrofitNetworkClient
@@ -26,6 +28,12 @@ val dataModule = module {
     single {
         androidContext()
             .getSharedPreferences("local_storage", Context.MODE_PRIVATE)
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     factory { Gson() }
